@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Framework Health Overview</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .feature-scores {
+            display: grid;
+            gap: 15px;
+        }
+        .feature-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+        .project-info {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Health Overview</h1>
+        <div class="feature-scores">
+            <!-- Existing features -->
+            <div class="feature-item">
+                <span>Screenshot Implementation:</span>
+                <span th:text="${results.seleniumImplementation.screenshotCapability ? '25 points ✓' : '25 points ✗'}">25 points</span>
+            </div>
+            <div class="feature-item">
+                <span>Cross Browser Support:</span>
+                <span th:text="${results.browserExecution.crossBrowserTesting ? '25 points ✓' : '25 points ✗'}">25 points</span>
+            </div>
+            <!-- New Analysis for Page Object Classes -->
+            <div class="feature-item">
+                <span>Page Object Pattern Utilization:</span>
+                <span th:text="${results.pageObjectDetails.usesPageObjectPattern ? '10 points ✓' : '10 points ✗'}">10 points</span>
+            </div>
+            <div class="feature-item">
+                <span>Locator Uniformity:</span>
+                <span th:text="${results.pageObjectDetails.hasUniformLocators ? '10 points ✓' : '10 points ✗'}">10 points</span>
+            </div>
+            <div class="feature-item">
+                <span>FindBy Annotations:</span>
+                <span th:text="${results.pageObjectDetails.usesFindBy ? '5 points ✓' : '5 points ✗'}">5 points</span>
+            </div>
+        </div>
+        <div class="project-info">
+            <p>Project Path: <span th:text="${project_path}"></span></p>
+            <p>Project Name: <span th:text="${project_name}"></span></p>
+        </div>
+    </div>
+</body>
+</html>

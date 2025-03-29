@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpSession;
+import javax.servlet.http.HttpSession;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -36,21 +36,27 @@ public class AnalyzerController {
                          Model model,
                          HttpSession session) {
         try {
-            String path = projectPath.isEmpty() ? "Team02_SeleniumNinjas" : projectPath;
-            AnalysisResults results = analyzer.analyzeBddFramework(path);
-            
-            String projectName = Paths.get(path).getFileName().toString();
-            
+            String path = projectPath.isEmpty() ? "./src" : projectPath;
+
+            // Handle and normalize path for Linux environment
+            Path normalizedPath = Paths.get(path).normalize();
+            if (!normalizedPath.toFile().exists()) {
+                throw new IllegalArgumentException("Directory not found: " + normalizedPath + 
+                    "\nPlease use a path relative to the workspace root (e.g. './src' or '.')");
+            }
+
+            AnalysisResults results = analyzer.analyzeBddFramework(normalizedPath.toString());
+            String projectName = normalizedPath.getFileName().toString();
+
             session.setAttribute("analysis_results", results);
-            session.setAttribute("project_path", path);
+            session.setAttribute("project_path", normalizedPath.toString());
             session.setAttribute("project_name", projectName);
-            
+
             model.addAttribute("results", results);
-            model.addAttribute("project_path", path);
+            model.addAttribute("project_path", normalizedPath.toString());
             model.addAttribute("project_name", projectName);
-            
+
             return "results";
-            
         } catch (Exception e) {
             log.error("Error analyzing project", e);
             model.addAttribute("error", e.getMessage());
@@ -63,16 +69,16 @@ public class AnalyzerController {
         AnalysisResults results = (AnalysisResults) session.getAttribute("analysis_results");
         String projectPath = (String) session.getAttribute("project_path");
         String projectName = (String) session.getAttribute("project_name");
-        
+
         if (results == null) {
             model.addAttribute("error", "Please analyze a project first");
             return "redirect:/";
         }
-        
+
         model.addAttribute("results", results);
         model.addAttribute("project_path", projectPath);
         model.addAttribute("project_name", projectName);
-        
+
         return "health_overview";
     }
 
@@ -82,19 +88,19 @@ public class AnalyzerController {
             AnalysisResults results = (AnalysisResults) session.getAttribute("analysis_results");
             String projectPath = (String) session.getAttribute("project_path");
             String projectName = (String) session.getAttribute("project_name");
-            
+
             if (results == null) {
                 return ResponseEntity.badRequest().build();
             }
-            
+
             Resource pdfResource = reportGenerator.generateScoringGuide(results, projectPath);
-            
+
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_PDF)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, 
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"bdd_scoring_guide_" + projectName + ".pdf\"")
                     .body(pdfResource);
-                    
+
         } catch (Exception e) {
             log.error("Error generating scoring guide", e);
             return ResponseEntity.internalServerError().build();
@@ -110,14 +116,14 @@ public class AnalyzerController {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "Project path is required"));
             }
-            
+
             AnalysisResults results = analyzer.analyzeBddFramework(projectPath);
             return ResponseEntity.ok(Map.of("results", results));
-            
+
         } catch (Exception e) {
             log.error("API error", e);
             return ResponseEntity.internalServerError()
                     .body(Map.of("error", e.getMessage()));
         }
     }
-} 
+}

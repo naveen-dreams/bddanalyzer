@@ -9,6 +9,7 @@ import java.util.Map;
 @Data
 public class AnalysisResults {
     private double overallScore;
+    private double seleniumImplementationScore;
     
     private FeatureFiles featureFiles = new FeatureFiles();
     private StepDefinitions stepDefinitions = new StepDefinitions();
@@ -83,6 +84,7 @@ public class AnalysisResults {
         private boolean webdriverManagement;
         private boolean actionsClassUsage;
         private boolean javascriptExecutor;
+        private double seleniumImplementationScore;
     }
 
     @Data
@@ -91,6 +93,7 @@ public class AnalysisResults {
         private boolean gridSupport;
         private boolean parallelExecution;
         private boolean retryMechanism;
+        private boolean crossBrowserTesting;
     }
 
     @Data
@@ -109,4 +112,4 @@ public class AnalysisResults {
         private double structure;
         private double codeHealth;
     }
-} 
+}
