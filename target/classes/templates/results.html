@@ -1,0 +1,15 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Analysis Results</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>Analysis Results</h1>
+    <h2 th:text="${project_name}">Project Name</h2>
+    <p>Path: <span th:text="${project_path}">path</span></p>
+    <a href="/health-overview">View Health Overview</a>
+</body>
+</html>
